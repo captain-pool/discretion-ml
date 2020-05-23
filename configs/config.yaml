@@ -1,0 +1,6 @@
+vector_dim: 
+  policy: 384
+  response: 384
+databases:
+  hr: /path/to/hr/docs/database
+  responses: /path/to/cases/database

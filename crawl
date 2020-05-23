@@ -1,0 +1,4 @@
+#! /bin/bash
+
+#TODO(@captain-pool): Update according to both types of data
+tr '\n' ' ' < ids | xargs python3 doc_crawler.py -c $KEY -id
