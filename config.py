@@ -5,6 +5,9 @@ import confuse
 def singleton(cls):
   instances = {}
   def getinstance(*args, **kwargs):
+    if kwargs.get("orphan"):
+      del(kwargs["orphan"])
+      return cls(*args, **kwargs)
     if cls not in instances:
       instances[cls] = cls(*args, **kwargs)
     return instances[cls]
@@ -16,8 +19,8 @@ def snake_case(string):
 
 @singleton
 class Config(addict.Dict):
-  def __init__(self, configs):
-    _parsed = self._parse(configs)
+  def __init__(self, args, configs):
+    _parsed = self._parse(configs, args)
     second_copy = addict.Dict(_parsed)
     self.update(second_copy)
 

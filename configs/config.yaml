@@ -1,6 +1,20 @@
-vector_dim: 
-  policy: 384
-  response: 384
-databases:
-  hr: /path/to/hr/docs/database
-  responses: /path/to/cases/database
+study_leave:
+  ids:
+    - 12Un4Qt2RHlhfrXaFDOW3scMht8OOQc0RWr6O6cxHd80
+  dir: ./poldocs/study_leave
+  vector_dim:
+    policy: 96
+    response: 384
+  databases:
+    policy: ./db/study_leave/policydb
+    response: ./db/study_leave/responsedb
+flexible_work:
+  ids:
+   - 1rTOROZgyIN0hXiXe9CdmWwDroxt5VcGGbH0KlKuCv_I
+  dir: ./poldocs/flexible_work
+  vector_dim:
+    policy: 96
+    response: 384
+  databases:
+    policy: ./db/flexible_work/policydb
+    response: ./db/flexible_work/responsedb

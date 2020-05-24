@@ -1,6 +1,6 @@
 import spacy
 
-class Vectorize:
+class Vectorize(object):
   def __init__(self, model="en_core_web_sm"):
     self._model_name = model
   def open(self):
