@@ -37,22 +37,25 @@ def iterate_sheets(gc, ids):
     dataframe = pd.DataFrame(data, columns=headers).iloc[:, :-3]
     yield id_, dataframe
 
-def vectorize_sheets(vct_model, ids, db, config):
+def insert_sheets_to_db(vct_model, ids, db, config):
   gc = gspread.service_account(filename=os.environ['KEY'])
   sheets = iterate_sheets(gc, ids)
   for drive_id, sheet in tqdm.tqdm(sheets, position=0):
     url = f"https://docs.google.com/spreadsheets/d/{drive_id}"
     for id_, row in tqdm.tqdm(sheet.iterrows()):
       row = row.tolist()
-      vct = []
-      for entry in row:
-        if not entry:
-          entry = "NA"
-        vct.append(vct_model.vectorize(entry))
-      vct = np.hstack(vct)
+      vct = vectorize_row(row, vct_model)
       payload = {"url": url, "rownum": id_}
       db.insert(json.dumps(payload), vct)
   db.write()
+
+def vectorize_row(row, vct_model):
+  vct = []
+  for entry in row:
+    if not entry:
+      entry = "NA"
+    vct.append(vct_model.vectorize(entry))
+  return np.hstack(vct)
 
 def vectorize_policy_docs(vct_model, dir_, db):
   for text_file in tqdm.tqdm(glob.glob(os.path.join(f"{dir_}/*.txt"))):
@@ -84,7 +87,7 @@ def main(argv):
   if ispolicy(cfg.t):
     vectorize_policy_docs(vct_model, cfg[ctx_name].dir, db)
   else:
-    vectorize_sheets(vct_model, cfg[ctx_name].ids, db, cfg)
+    insert_sheets_to_db(vct_model, cfg[ctx_name].ids, db, cfg)
 
 if __name__ == "__main__":
   parser = build_parser()
