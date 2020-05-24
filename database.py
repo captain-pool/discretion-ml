@@ -13,6 +13,15 @@ class Database(object):
     self._docs_path = os.path.join(path, "%s.docs" % name)
     self._vector_dim = vector_dim
 
+  def __repr__(self):
+    if hasattr(self, "_docs"):
+      result = []
+      result.append("Index \t| Path \t| Vector")
+      result.append("-" * (len("Index t| Path | Vector") + 2*8))
+      for idx, data in enumerate(self._docs):
+        result.append(f"{idx} \t| {data} \t| <float32 vector representation>")
+      return "\n".join(result)
+    return "Datbase not yet opened"
   def open(self):
     if os.path.exists(self._index_file) and os.path.exists(self._docs_path):
       self._index = faiss.read_index(self._index_file)
