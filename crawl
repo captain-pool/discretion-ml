@@ -1,4 +1,9 @@
 #! /bin/bash
 
-#TODO(@captain-pool): Update according to both types of data
-tr '\n' ' ' < ids | xargs python3 doc_crawler.py -c $KEY -id
+# Policy Docs
+echo "vectorizing policy docs"
+python3 doc_crawler.py -cfg configs/*.yaml -t P -m en_core_wb_sm -ctx $2
+
+# Response Docs
+echo "Fetching and vectorizing Responses"
+python3 doc_crawler.py -cfg configs/*.yaml -t R -m en_core_wb_sm -ctx $2
