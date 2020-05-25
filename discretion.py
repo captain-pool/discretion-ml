@@ -54,6 +54,8 @@ class Discretion(object):
     """
     row = flask.request.args.get("row", None)
     count = flask.request.args.get("count", 1)
+    related_policy_docs = []
+    related_cases = []
     if row:
       row = json.loads(row)
       ref_vector = doc_crawler.vectorize_row(row, self._vect_model)
