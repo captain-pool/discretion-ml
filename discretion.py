@@ -1,6 +1,7 @@
 import os
 import json
 
+import argparse
 import flask
 import config
 import database
@@ -25,16 +26,16 @@ class Discretion(object):
 
   @staticmethod
   def build_parser():
-    parser = argparser.ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--model", dest="vmodel", required=True,
                         help="spaCy model to use for Vectorization")
     parser.add_argument("-cfg", dest="config", nargs="+", required=True,
                         type=os.path.normpath, help="Path to config files")
     parser.add_argument("-ctx", type=str, required=True, help="Context to use")
-    parser.add_argument("--host", type=str, required=True, default="0.0.0.0",
+    parser.add_argument("--host", type=str, default="0.0.0.0",
                         help="IP of the host")
     parser.add_argument("-p", "--port", type=int, help="Port to use",
-                        default=8080, required=True)
+                        default=8080)
     return parser
 
   def search(self):
@@ -52,25 +53,28 @@ class Discretion(object):
                             }, . . .(similar json objects for multiple cases)]
                  }
     """
-    row = flask.request.args.get("row", None)
-    count = flask.request.args.get("count", 1)
+    row = flask.request.json.get("row", None) # choose b/w flask.request.args and flask.request.json
+    count = flask.request.json.get("count", 1) # choose b/w flask.request.args and flask.request.json
     related_policy_docs = []
     related_cases = []
     if row:
-      row = json.loads(row)
+      # row = json.loads(row)
       ref_vector = doc_crawler.vectorize_row(row, self._vect_model)
       policy_vector = self._vect_model.vectorize(" ".join(row))
       related_policy_docs = self._policy_db.search(policy_vector, count)
       related_cases = self._response_db.search(ref_vector, count)
-    return jsonify({
+    return flask.jsonify({
         "poldocs": related_policy_docs,
         "cases": related_cases
         })
 
   def spawn_server(self):
     if not self._route_set:
-      self._app.route(rule=f"/{self._ctx_name}", methods=["GET"])(self.search)
+      self._app.route(rule=f"/{self._ctx_name}", methods=["POST"])(self.search)
       self._route_set = True
+    self._vect_model.open()
+    self._policy_db.open()
+    self._response_db.open()
     self._app.run(
         self._config["host"],
         self._config["port"])
