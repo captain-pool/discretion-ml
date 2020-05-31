@@ -53,8 +53,8 @@ class Discretion(object):
                             }, . . .(similar json objects for multiple cases)]
                  }
     """
-    row = flask.request.json.get("row", None) # choose b/w flask.request.args and flask.request.json
-    count = flask.request.json.get("count", 1) # choose b/w flask.request.args and flask.request.json
+    row = flask.request.json.get("row", None) # TODO(@captain-pool): choose b/w flask.request.args and flask.request.json
+    count = flask.request.json.get("count", 1) # TODO(@captain-pool): choose b/w flask.request.args and flask.request.json
     related_policy_docs = []
     related_cases = []
     if row:
