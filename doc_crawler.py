@@ -43,10 +43,9 @@ def insert_sheets_to_db(vct_model, ids, db, config):
   for drive_id, sheet in tqdm.tqdm(sheets, position=0):
     url = f"https://docs.google.com/spreadsheets/d/{drive_id}"
     for id_, row in tqdm.tqdm(sheet.iterrows()):
-      row = row.tolist()
-      vct = vectorize_row(row, vct_model)
-      payload = {"url": url, "rownum": id_}
-      db.insert(json.dumps(payload), vct)
+      vct = vectorize_row(row.tolist(), vct_model)
+      payload = row.to_json() #json.dumps({"url": url, "rownum": id_})
+      db.insert(payload, vct)
   db.write()
 
 def vectorize_row(row, vct_model):
