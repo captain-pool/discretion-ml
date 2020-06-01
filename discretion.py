@@ -106,7 +106,7 @@ class Discretion(object):
 
   def update_state(self):
     decision = flask.request.json.get("decision", "notdecided") # TODO(@captain-pool): choose b/w flask.request.args and flask.request.json
-    email = flask.request.json["token"] # TODO(@captain-pool): choose b/w flask.request.args and flask.request.json
+    token = flask.request.json["token"] # TODO(@captain-pool): choose b/w flask.request.args and flask.request.json
     row = self._decision_db.find_one({"token": token})
     if row:
       if row['decision'].lower() != decision.lower() and decision.lower() != "notdecided":
