@@ -22,7 +22,7 @@ def build_parser():
                       help="spaCy model to use")
   parser.add_argument("-ctx", "--context", type=str, required=True,
                      help="Context")
-  parser.add_argument('-host', dest="host", type=str, default='localhost',
+  parser.add_argument('--host', dest="host", type=str, default='localhost',
                       help="Host address for mongodb")
   parser.add_argument('-p', dest="port", type=int, default=27017,
                       help="Port of mongodb server")
