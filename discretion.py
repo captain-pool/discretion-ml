@@ -70,9 +70,13 @@ class Discretion(object):
         "cases": related_cases
         })
 
+  def dummy_response(self):
+    return "Server Running"
+
   def spawn_server(self):
     if not self._route_set:
       self._app.route(rule=f"/{self._ctx_name}", methods=["POST"])(self.search)
+      self._app.route(rule="/", methods=["GET"])(self.dummy_response)
       self._route_set = True
     self._vect_model.open()
     self._policy_db.open()
