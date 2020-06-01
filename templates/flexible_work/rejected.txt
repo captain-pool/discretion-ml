@@ -1,0 +1,13 @@
+Hi %firstname%,
+Thank you for submitting your flexible working request about %summary% (Reference ID: %id%).
+
+Events happen in life, and I am here to support you through them.
+In the discussion earlier, we agreed on some better, alternative arrangements to your initial proposal. Hence, I am declining your initial request. 
+
+If you have any questions/concerns, please don’t hesitate to discuss with me.
+
+All the best,
+Peter Varma
+
+Project Manager
+

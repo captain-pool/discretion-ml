@@ -1,0 +1,18 @@
+Hi %firstname%,
+Thank you for submitting your flexible working request about %summary% (Reference ID: %id%).
+
+Events happen in life, and I am here to support you through them.
+
+I will get in touch in the next 2 days to discuss your circumstances and agree on the next steps.
+
+Your well-being is our top priority. The system suggested some ‘areas of consideration’ when you first raised the requests. Let’s discuss in the next meeting.
+What and how I support you?
+What would you be doing differently once you start the flexible working pattern? How would you manage a balance in the new circumstances? 
+
+If you have any questions/concerns, please don’t hesitate to discuss with me.
+
+All the best,
+Peter Varma
+
+Project Manager
+

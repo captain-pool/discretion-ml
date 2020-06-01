@@ -1,0 +1,19 @@
+Hi %firstname%,
+Thank you for submitting your flexible working request about %summary% (Reference ID: %id%).
+
+This is to confirm the approval of your request based on your circumstances, policy guidance, and similar requests in the past.
+
+Events happen in life, and I am here to support you through them.
+
+Your well-being is our top priority. The system suggested some ‘areas of consideration’ when you first raised the requests. 
+What and how I support you?
+What would you be doing differently once you start the flexible working pattern? How would you manage a balance in the new circumstances? 
+
+Please revisit them when things evolve. I will check in regularly with you on the situation too.
+
+If you have any questions/concerns, please don’t hesitate to discuss with me.
+
+All the best,
+Peter Varma
+
+Project Manager
