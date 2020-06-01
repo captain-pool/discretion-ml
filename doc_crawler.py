@@ -39,8 +39,15 @@ def iterate_sheets(gc, ids):
     sheet = gc.open_by_key(id_).sheet1
     data = sheet.get_all_values()
     headers = data.pop(0)
-    dataframe = pd.DataFrame(data, columns=headers).iloc[:, :-3]
-    dataframe.columns = ['summary', 'situation', 'arrangement', 'anything_else']
+    dataframe = pd.DataFrame(data, columns=headers).iloc[:, :-2]
+    breakpoint()
+    dataframe.drop(columns=['ending_displayed_id'], inplace=True)
+    dataframe.columns = [
+        'summary',
+        'situation',
+        'arrangement',
+        'anything_else',
+        'email']
     yield dataframe
 
 def insert_sheets_to_db(vct_model, ids, db, collection, config):
@@ -48,7 +55,7 @@ def insert_sheets_to_db(vct_model, ids, db, collection, config):
   sheets = iterate_sheets(gc, ids)
   for sheet in tqdm.tqdm(sheets, position=0):
     for id_, row in tqdm.tqdm(sheet.iterrows()):
-      vct = vectorize_row(row.tolist(), vct_model)
+      vct = vectorize_row(row.tolist()[:-1], vct_model)
       row['decision'] = 'notdecided'
       insert_ctx = collection.insert_one(row.to_dict())
       db.insert(str(insert_ctx.inserted_id), vct)
