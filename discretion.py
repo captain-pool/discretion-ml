@@ -32,6 +32,7 @@ class Discretion(object):
     self._route_set = False
     self._email_id_queue = []
     self._email_body_queue = []
+
   @staticmethod
   def build_parser():
     parser = argparse.ArgumentParser()
@@ -97,8 +98,8 @@ class Discretion(object):
     return str(len(self._email_id_queue))
 
   def update_state(self):
-    decision = flask.request.json.get("decision", "notdecided")
-    email = flask.request.json["email"]
+    decision = flask.request.json.get("decision", "notdecided") # TODO(@captain-pool): choose b/w flask.request.args and flask.request.json
+    email = flask.request.json["email"] # TODO(@captain-pool): choose b/w flask.request.args and flask.request.json
     row = self._decision_db.find_one({"email": email})
     if row:
       if row['decision'].lower() != decision.lower() and decision.lower() != "notdecided":
@@ -120,6 +121,7 @@ class Discretion(object):
       self._app.route(rule="/email/queue/length", methods=["GET"])(self.queue_length)
       self._app.route(rule="/email/queue/id/pop", methods=["GET"])(self.pop_id)
       self._app.route(rule="/email/queue/body/pop", methods=["GET"])(self.pop_body)
+      self._app.route(rule="/{self._ctx_name}/update", methods=["POST"])(self.update_state)
       self._route_set = True
     self._vect_model.open()
     self._policy_db.open()

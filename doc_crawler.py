@@ -40,7 +40,6 @@ def iterate_sheets(gc, ids):
     data = sheet.get_all_values()
     headers = data.pop(0)
     dataframe = pd.DataFrame(data, columns=headers).iloc[:, :-2]
-    breakpoint()
     dataframe.drop(columns=['ending_displayed_id'], inplace=True)
     dataframe.columns = [
         'summary',
