@@ -14,17 +14,12 @@ $ python -m spacy download <model_name/ preferably en_core_wb_sm>
 ```
 # Crawling Policy Documents and Responses
 ```bash
-$ python doc_crawler.py -cfg configs/*yaml -t P \
-         -m <spacy_model_name> \
-         -ctx <context_name>
+$ ./crawl <context_name> --host <mongo_host> -p <mongo_port>
 ```
 
-#Launching the backend
+# Launching the backend
 
 ```bash
-$ python3 discretion.py -cfg configs/*yaml \
-                        -ctx <context_name> \
-                        -m <spacy_model_to_use> \
-                        -p <port of server> --host <host IP>
+$ ./launch_server.sh <context_name> -mp <mongo port> -mh <mongo host>
 ```
 
