@@ -42,10 +42,11 @@ class Database(object):
     return docs_paths.tolist()
   
   def insert(self, string, vector):
-    if len(vector.shape) < 2:
-      vector = vector[np.newaxis, :]
-    self._index.add(vector)
-    self._docs = np.append(self._docs, string)
+    if not string in self._docs:
+      if len(vector.shape) < 2:
+        vector = vector[np.newaxis, :]
+      self._index.add(vector)
+      self._docs = np.append(self._docs, string)
   
   def remove(self, index):
     index = np.asarray(index)

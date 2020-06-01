@@ -10,6 +10,7 @@ import vectorizer
 import pandas as pd
 import numpy as np
 import tqdm
+import pymongo
 
 def build_parser():
   parser = argparse.ArgumentParser()
@@ -21,6 +22,10 @@ def build_parser():
                       help="spaCy model to use")
   parser.add_argument("-ctx", "--context", type=str, required=True,
                      help="Context")
+  parser.add_argument('-host', dest="host", type=str, default='localhost',
+                      help="Host address for mongodb")
+  parser.add_argument('-p', dest="port", type=int, default=27017,
+                      help="Port of mongodb server")
   return parser
 
 def ispolicy(type_):
@@ -35,17 +40,18 @@ def iterate_sheets(gc, ids):
     data = sheet.get_all_values()
     headers = data.pop(0)
     dataframe = pd.DataFrame(data, columns=headers).iloc[:, :-3]
-    yield id_, dataframe
+    dataframe.columns = ['summary', 'situation', 'arrangement', 'anything_else']
+    yield dataframe
 
-def insert_sheets_to_db(vct_model, ids, db, config):
+def insert_sheets_to_db(vct_model, ids, db, collection, config):
   gc = gspread.service_account(filename=os.environ['KEY'])
   sheets = iterate_sheets(gc, ids)
-  for drive_id, sheet in tqdm.tqdm(sheets, position=0):
-    url = f"https://docs.google.com/spreadsheets/d/{drive_id}"
+  for sheet in tqdm.tqdm(sheets, position=0):
     for id_, row in tqdm.tqdm(sheet.iterrows()):
       vct = vectorize_row(row.tolist(), vct_model)
-      payload = row.to_json() #json.dumps({"url": url, "rownum": id_})
-      db.insert(payload, vct)
+      row['decision'] = 'notdecided'
+      insert_ctx = collection.insert_one(row.to_dict())
+      db.insert(str(insert_ctx.inserted_id), vct)
   db.write()
 
 def vectorize_row(row, vct_model):
@@ -68,6 +74,7 @@ def vectorize_policy_docs(vct_model, dir_, db):
 def main(argv):
   db = None
   cfg = config.Config(argv, argv.configs, orphan=True)
+  connection = pymongo.MongoClient(cfg.host, cfg.port)
   vct_model = vectorizer.Vectorize(cfg.vmodel)
   ctx_name = cfg.context
   if not cfg.get(ctx_name):
@@ -86,7 +93,11 @@ def main(argv):
   if ispolicy(cfg.t):
     vectorize_policy_docs(vct_model, cfg[ctx_name].dir, db)
   else:
-    insert_sheets_to_db(vct_model, cfg[ctx_name].ids, db, cfg)
+    mongodb = connection[ctx_name]
+    if ctx_name not in connection.list_database_names():
+      mongodb.create_collection('response')
+    collection = mongodb['response']
+    insert_sheets_to_db(vct_model, cfg[ctx_name].ids, db, collection, cfg)
 
 if __name__ == "__main__":
   parser = build_parser()
