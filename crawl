@@ -2,8 +2,10 @@
 
 # Policy Docs
 echo "vectorizing policy docs"
-python3 doc_crawler.py -cfg configs/*.yaml -t P -m en_core_web_sm -ctx $1
+ctx_name="$1"
+shift
+python3 doc_crawler.py -cfg configs/*.yaml -t P -m en_core_web_sm -ctx $ctx_name "$@"
 
 # Response Docs
 echo "Fetching and vectorizing Responses"
-python3 doc_crawler.py -cfg configs/*.yaml -t R -m en_core_web_sm -ctx $1
+python3 doc_crawler.py -cfg configs/*.yaml -t R -m en_core_web_sm -ctx $ctx_name "$@"

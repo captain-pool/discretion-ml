@@ -74,6 +74,7 @@ def vectorize_policy_docs(vct_model, dir_, db):
 def main(argv):
   db = None
   cfg = config.Config(argv, argv.configs, orphan=True)
+  print(cfg)
   connection = pymongo.MongoClient(cfg.host, cfg.port)
   vct_model = vectorizer.Vectorize(cfg.vmodel)
   ctx_name = cfg.context
