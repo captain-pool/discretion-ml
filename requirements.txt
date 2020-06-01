@@ -21,6 +21,7 @@ en-core-web-sm==2.2.5
 evdev==0.7.0
 faiss==1.6.3
 Flask==1.1.2
+Flask-Cors==3.0.8
 google-auth==1.16.0
 google-auth-oauthlib==0.4.1
 gspread==3.6.0
