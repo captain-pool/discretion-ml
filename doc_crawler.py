@@ -10,7 +10,11 @@ import vectorizer
 import pandas as pd
 import numpy as np
 import tqdm
+import hashlib, base64, datetime
+import re
 import pymongo
+from bson import objectid
+
 
 def build_parser():
   parser = argparse.ArgumentParser()
@@ -27,6 +31,13 @@ def build_parser():
   parser.add_argument('-p', dest="port", type=int, default=27017,
                       help="Port of mongodb server")
   return parser
+
+def get_random_id(length=6):
+  timestamp = datetime.datetime.now()
+  b64encoded = base64.b64encode(
+      hashlib.sha256(str(timestamp).encode("utf-8")).digest())
+  b64encoded = re.sub("[+/=]", "", b64encoded.decode("utf-8"))
+  return b64encoded[:length].upper()
 
 def ispolicy(type_):
   return type_.lower() == "p" or type_.lower() == "policy"
@@ -46,7 +57,8 @@ def iterate_sheets(gc, ids):
         'situation',
         'arrangement',
         'anything_else',
-        'email']
+        'email',
+        'firstname']
     yield dataframe
 
 def insert_sheets_to_db(vct_model, ids, db, collection, config):
@@ -54,10 +66,13 @@ def insert_sheets_to_db(vct_model, ids, db, collection, config):
   sheets = iterate_sheets(gc, ids)
   for sheet in tqdm.tqdm(sheets, position=0):
     for id_, row in tqdm.tqdm(sheet.iterrows()):
-      vct = vectorize_row(row.tolist()[:-1], vct_model)
+      vct = vectorize_row(row.tolist()[:-2], vct_model)
       row['decision'] = 'notdecided'
-      insert_ctx = collection.insert_one(row.to_dict())
-      db.insert(str(insert_ctx.inserted_id), vct)
+      payload = row.to_dict()
+      token = get_random_id()
+      payload.update({"token": token})
+      collection.insert_one(payload)
+      db.insert(token, vct)
   db.write()
 
 def vectorize_row(row, vct_model):

@@ -5,6 +5,10 @@ study_leave:
   vector_dim:
     policy: 96
     response: 384
+  templates:
+    accepted: ./templates/study_leave/accepted.txt
+    rejected: ./templates/study_leave/rejected.txt
+    nmi: ./templates/study_leave/need_more_information.txt
   databases:
     policy: ./db/study_leave/policydb
     response: ./db/study_leave/responsedb
@@ -15,6 +19,10 @@ flexible_work:
   vector_dim:
     policy: 96
     response: 384
+  templates:
+    accepted: ./templates/flexible_work/accepted.txt
+    rejected: ./templates/flexible_work/rejected.txt
+    nmi: ./templates/flexible_work/need_more_information.txt
   databases:
     policy: ./db/flexible_work/policydb
     response: ./db/flexible_work/responsedb
