@@ -3,6 +3,7 @@ import json
 
 import argparse
 import flask
+import flask_cors
 import config
 import database
 import doc_crawler
@@ -11,6 +12,7 @@ import vectorizer
 class Discretion(object):
   def __init__(self, args):
     self._app = flask.Flask(__name__)
+    flask_cors.CORS(self._app)
     self._vect_model = vectorizer.Vectorize(args.vmodel)
     self._config = config.Config(args, args.config, orphan=True)
     if not self._config.get(args.ctx):
