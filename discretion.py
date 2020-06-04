@@ -5,6 +5,8 @@ import json
 import argparse
 import flask
 import flask_cors
+import markupsafe
+import bson.objectid
 import config
 import database
 import doc_crawler
@@ -104,6 +106,20 @@ class Discretion(object):
   def queue_length(self):
     return str(len(self._email_id_queue))
 
+  def get_all(self):
+    cursor = self._decision_db.find()
+    data = []
+    for item in cursor:
+      item['_id'] = str(item['_id'])
+      data.append(item)
+    return flask.jsonify(data)
+
+  def get_by_id(self, _id):
+    _id = markupsafe.escape(_id)
+    data = self._decision_db.find_one({"_id": bson.objectid.ObjectId(_id)})
+    data["_id"] = str(data['_id'])
+    return flask.jsonify(data)
+
   def update_state(self):
     decision = flask.request.json.get("decision", "notdecided") # TODO(@captain-pool): choose b/w flask.request.args and flask.request.json
     token = flask.request.json["token"] # TODO(@captain-pool): choose b/w flask.request.args and flask.request.json
@@ -132,6 +148,8 @@ class Discretion(object):
       self._app.route(rule="/email/queue/id/pop", methods=["GET"])(self.pop_id)
       self._app.route(rule="/email/queue/body/pop", methods=["GET"])(self.pop_body)
       self._app.route(rule=f"/{self._ctx_name}/update", methods=["POST"])(self.update_state)
+      self._app.route(rule=f"/database/query/<_id>", methods=["GET"])(self.get_by_id)
+      self._app.route(rule=f"/database/query/all", methods=["GET"])(self.get_all)
       self._route_set = True
     self._vect_model.open()
     self._policy_db.open()
