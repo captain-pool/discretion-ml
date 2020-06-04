@@ -117,8 +117,10 @@ class Discretion(object):
   def get_by_id(self, _id):
     _id = markupsafe.escape(_id)
     data = self._decision_db.find_one({"_id": bson.objectid.ObjectId(_id)})
-    data["_id"] = str(data['_id'])
-    return flask.jsonify(data)
+    if data:
+      data["_id"] = str(data['_id'])
+      return flask.jsonify(data)
+    return ""
 
   def update_state(self):
     decision = flask.request.json.get("decision", "notdecided") # TODO(@captain-pool): choose b/w flask.request.args and flask.request.json
